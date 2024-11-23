@@ -20,8 +20,8 @@ bandadjnhd = bands(3,3);
 bandhe = bands(4,1);
 bandadjed = bands(4,3);
 % calculate \bb\trans\x
-btransx = xall*[eye(d);parasLower]; % paras1 include upper d-by-d block.
-btransxT = [btransx(groupIndex==1,:),wall(groupIndex==1,:)]; % paras1 include upper d-by-d block.
+btransx = xall*[eye(d);reshape(parasLower,p-d,d)];
+btransxT = [xall(groupIndex==1,:)*[eye(d);reshape(parasLower,p-d,d)],wall(groupIndex==1,:)]; % paras1 include upper d-by-d block.
 % calculate all \bb\trans\x_i-\bb\trans\x_j (i row j column)
 if (d>1)
     btxall = permute(repmat(btransx',[1 1 samplesize]),[3 2 1])-permute(repmat(btransx,[1 1 samplesize]),[1 3 2]);% {i,j} = \bb\trans\x_j-\bb\trans\x_i
