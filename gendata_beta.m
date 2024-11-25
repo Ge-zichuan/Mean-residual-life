@@ -38,6 +38,6 @@ switch bttype
         parasout = [0,1,0,1,0,1]';
     case 'mimic'
         parasout = [0.4,0.01,-0.4,-0.01,-0.1,0.02,-0.1,-0.7]';
-        parasout = parasout.*otherOptions';
+        parasout = parasout.*1';
 end
 end
