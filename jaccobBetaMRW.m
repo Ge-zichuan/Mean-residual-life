@@ -29,7 +29,7 @@ if (d>1)
     btxallN = btxall;% {i,j} = \bb\trans\x_j-\bb\trans\x_i
 else
     btxall = repmat(btransx,[1 samplesize])-repmat(btransx',[samplesize 1]);% {i,j} = \bb\trans\x_j-\bb\trans\x_i
-    btxallT = repmat(btransxT,[1 samplesizeT])-repmat(btransxT',[samplesizeT 1]);% {i,j} = \bb\trans\x_j-\bb\trans\x_i
+    btxallT = permute(repmat(btransxT',[1 1 samplesizeT]),[3 2 1])-permute(repmat(btransxT,[1 1 samplesizeT]),[1 3 2]);% {i,j} = \bb\trans\x_j-\bb\trans\x_i
     btxallN = btxall;% {i,j} = \bb\trans\x_j-\bb\trans\x_i
 end
 % calculate estimating equation, each term.
@@ -40,23 +40,23 @@ if (d>1)
 else
     kerD = 1;
 end
-khbetaxT = kernel(btxallT/(banddh*bandadjdhd),kerD,'Epanechnikov')/(banddh*bandadjdhd)^d;
+khbetaxT = kernel(btxallT/(banddh*bandadjdhd),3,'Epanechnikov')/(banddh*bandadjdhd)^d;
 khbetaxN = kernel(btxallN/(banddh*bandadjdhd),kerD,'Epanechnikov')/(banddh*bandadjdhd)^d;
 denoVecT = khbetaxT*(zdiffallT>=0);
 denoVecN = khbetaxN*(zdiffallN>=0);
-khbetaxT = kernel(btxallT/(banddh*bandadjdhn),kerD,'Epanechnikov')/(banddh*bandadjdhn)^d;
+khbetaxT = kernel(btxallT/(banddh*bandadjdhn),3,'Epanechnikov')/(banddh*bandadjdhn)^d;
 khbetaxN = kernel(btxallN/(banddh*bandadjdhn),kerD,'Epanechnikov')/(banddh*bandadjdhn)^d;
 lambdaDen(:,1) = sum(kbzN.*repmat(deltaallN,1,samplesizeN)'.*khbetaxN./denoVecN,2);
 lambdaDen(groupIndex==1,1) = sum(kbzT.*repmat(deltaallT,1,samplesizeT)'.*khbetaxT./denoVecT,2);
 % calculate kernel values of K\prime(.)
-khprimevecT = kernel2(btxallT/(bandnh*bandadjnhn),kerD,d+1,'Epanechnikov')/(bandnh*bandadjnhn)^(d+2);
+khprimevecT = kernel2(btxallT/(bandnh*bandadjnhn),3,d+1,'Epanechnikov')/(bandnh*bandadjnhn)^(d+2);
 khprimevecN = kernel2(btxallN/(bandnh*bandadjnhn),kerD,d,'Epanechnikov')/(bandnh*bandadjnhn)^(d+1);
 for t = 1:d
     numeVecT(:,:,t) = squeeze(khprimevecT(:,:,t))*(zdiffallT>=0);
     numeVecN(:,:,t) = squeeze(khprimevecN(:,:,t))*(zdiffallN>=0);
 end
 lambdaNum = zeros(samplesize,d);
-khbetaxT = kernel(btxallT/(bandnh*bandadjnhd),kerD,'Epanechnikov')/(bandnh*bandadjnhd)^d;
+khbetaxT = kernel(btxallT/(bandnh*bandadjnhd),3,'Epanechnikov')/(bandnh*bandadjnhd)^d;
 khbetaxN = kernel(btxallN/(bandnh*bandadjnhd),kerD,'Epanechnikov')/(bandnh*bandadjnhd)^d;
 for t = 1:d
     lambdaNum(:,t) = sum(-kbzN.*repmat(deltaallN,1,samplesizeN)'.*squeeze(khprimevecN(:,:,t))./denoVecN,2)...
